@@ -1,61 +1,250 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🔥 Système d'Alerte Incendie IoT
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Un système complet d'alerte incendie combinant **IoT**, **programmation web** et **modélisation 3D** pour la surveillance en temps réel d'une maison.
 
-## About Laravel
+## 🎯 Objectifs du Projet
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Détection automatique** : Fumée, température, humidité, flamme
+- **Alertes temps réel** : Notifications instantanées et alertes sonores
+- **Dashboard web** : Interface de monitoring avec visualisation 3D
+- **Historique complet** : Logs et analyses des incidents
+- **Architecture modulaire** : Facilement extensible
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🛠️ Technologies Utilisées
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Backend
+- **Laravel 12** : Framework PHP moderne
+- **MySQL** : Base de données relationnelle
+- **Tailwind CSS 4.0** : Framework CSS utilitaire
+- **WebSockets** : Communication temps réel
 
-## Learning Laravel
+### IoT
+- **ESP32** : Microcontrôleur WiFi
+- **Capteurs** : MQ-2 (fumée), DHT22 (température/humidité), capteur flamme IR
+- **Actionneurs** : Buzzer, LED RGB
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 3D
+- **Modélisation** : Boîtiers et supports pour impression 3D
+- **Visualisation** : Three.js pour la vue 3D interactive
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 📁 Structure du Projet
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```
+alerte-incendie/
+├── app/
+│   ├── Http/Controllers/FireController.php
+│   ├── Models/ (Device, Sensor, Alert, Zone, SensorReading)
+│   └── Services/FireDetectionService.php
+├── database/
+│   ├── migrations/ (5 tables principales)
+│   └── seeders/FireSystemSeeder.php
+├── resources/views/fire/
+│   ├── dashboard.blade.php
+│   ├── sensors.blade.php
+│   ├── alerts.blade.php
+│   └── zones.blade.php
+├── routes/
+│   ├── api.php (endpoints Arduino)
+│   └── web.php (routes dashboard)
+├── arduino/
+│   ├── fire_detection_system.ino
+│   ├── config.h
+│   └── README_MONTAGE.md
+└── 3d_models/ (à créer)
+    ├── sensor_case.stl
+    ├── buzzer_case.stl
+    └── device_case.stl
+```
 
-## Laravel Sponsors
+## 🚀 Installation et Configuration
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 1. Prérequis
+- PHP 8.2+
+- Composer
+- Node.js & NPM
+- MySQL/MariaDB
+- Arduino IDE
+- ESP32 DevKit
 
-### Premium Partners
+### 2. Installation Laravel
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+# Cloner le projet
+git clone <votre-repo>
+cd alerte-incendie
 
-## Contributing
+# Installer les dépendances
+composer install
+npm install
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Configuration
+cp .env.example .env
+php artisan key:generate
 
-## Code of Conduct
+# Base de données
+php artisan migrate
+php artisan db:seed --class=FireSystemSeeder
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Compiler les assets
+npm run build
+```
 
-## Security Vulnerabilities
+### 3. Configuration Arduino
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. **Installer les bibliothèques** :
+   - WiFi (ESP32)
+   - HTTPClient (ESP32)
+   - ArduinoJson
+   - DHT sensor library
 
-## License
+2. **Modifier la configuration** dans `arduino/config.h` :
+   ```cpp
+   const char* WIFI_SSID = "VOTRE_WIFI";
+   const char* WIFI_PASSWORD = "VOTRE_MOT_DE_PASSE";
+   const char* API_SERVER_URL = "http://VOTRE_IP/api/fire/sensor-data";
+   ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+3. **Uploader le code** sur l'ESP32
+
+### 4. Montage Électronique
+
+Voir le guide détaillé dans `arduino/README_MONTAGE.md`
+
+## 🔧 Utilisation
+
+### Dashboard Web
+Accédez à `http://localhost/fire/dashboard` pour :
+- Surveiller les capteurs en temps réel
+- Consulter l'historique des alertes
+- Configurer les zones et seuils
+- Visualiser la maison en 3D
+
+### API Arduino
+Endpoints disponibles :
+- `POST /api/fire/sensor-data` : Envoi des données capteurs
+- `POST /api/fire/alert` : Déclenchement d'alerte manuelle
+- `GET /api/fire/system-status` : Statut du système
+
+### Tests
+```bash
+# Tester le système avec des données simulées
+php artisan fire:test
+
+# Générer des données de test
+php artisan db:seed --class=FireSystemSeeder
+```
+
+## 📊 Fonctionnalités
+
+### Détection Automatique
+- **Fumée/Gaz** : Capteur MQ-2 avec seuils configurables
+- **Température** : DHT22 avec alertes de surchauffe
+- **Humidité** : Surveillance de l'humidité ambiante
+- **Flamme** : Détection infrarouge de flamme
+
+### Alertes Intelligentes
+- **4 niveaux** : Info, Warning, Critical, Emergency
+- **Notifications multiples** : Sonores, visuelles, web
+- **Résolution automatique** : Auto-résolution des anciennes alertes
+- **Historique complet** : Logs détaillés avec filtres
+
+### Dashboard Temps Réel
+- **Vue globale** : Statut de tous les devices et capteurs
+- **Cartes de statistiques** : Métriques en temps réel
+- **Alertes récentes** : Liste des incidents actifs
+- **Vue 3D** : Plan interactif de la maison
+
+### Gestion Avancée
+- **Zones configurables** : Définition des espaces surveillés
+- **Seuils personnalisés** : Ajustement selon l'environnement
+- **Calibration** : Ajustement automatique des capteurs
+- **Maintenance** : Planning des vérifications
+
+## 🔒 Sécurité
+
+- **Authentification API** : Clés API uniques par device
+- **Validation stricte** : Vérification de toutes les données
+- **HTTPS obligatoire** : Communication chiffrée
+- **Rate limiting** : Protection contre le spam
+
+## 📈 Monitoring et Analytics
+
+### Métriques Disponibles
+- Nombre de devices en ligne/offline
+- Capteurs actifs/inactifs
+- Alertes par niveau et zone
+- Tendances temporelles
+
+### Rapports
+- Export PDF des incidents
+- Graphiques de tendances
+- Statistiques de maintenance
+- Analyse des faux positifs
+
+## 🛠️ Développement
+
+### Structure MVC
+- **Models** : Relations Eloquent entre entités
+- **Controllers** : Logique métier et API
+- **Services** : Services métier (FireDetectionService)
+- **Views** : Interface utilisateur responsive
+
+### API RESTful
+- Endpoints standardisés
+- Codes de retour HTTP appropriés
+- Validation des données
+- Gestion d'erreurs
+
+### Tests
+```bash
+# Tests unitaires
+php artisan test
+
+# Tests de l'API
+php artisan fire:test --device=1
+```
+
+## 🔮 Améliorations Futures
+
+### Fonctionnalités Avancées
+- **IA prédictive** : Détection d'anomalies avant alerte
+- **Notifications externes** : SMS, Email, Push
+- **Intégration pompiers** : Appel automatique
+- **Caméras IP** : Visualisation en temps réel
+
+### Optimisations
+- **Deep sleep** : Économie d'énergie ESP32
+- **OTA updates** : Mise à jour sans fil
+- **SD card logging** : Stockage local
+- **Multi-zones** : Surveillance étendue
+
+### 3D Printing
+- **Boîtiers étanches** : Protection des capteurs
+- **Supports muraux** : Installation discrète
+- **Central de contrôle** : Boîtier principal
+- **Sirène d'alerte** : Boîtier avec LED et buzzer
+
+## 📞 Support
+
+### Documentation
+- Guide de montage : `arduino/README_MONTAGE.md`
+- Configuration : `arduino/config.h`
+- API : Routes dans `routes/api.php`
+
+### Dépannage
+- Vérifiez les connexions WiFi
+- Testez les capteurs individuellement
+- Consultez les logs Laravel
+- Utilisez le moniteur série Arduino
+
+## 📄 Licence
+
+Ce projet est développé dans le cadre d'un stage de formation.
+
+## 👥 Auteur
+
+Projet réalisé par [Votre Nom] - Stage IoT/Programmation/3D
+
+---
+
+**🔥 Système d'Alerte Incendie IoT - Sécurité et Innovation**
